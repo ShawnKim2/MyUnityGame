@@ -60,23 +60,23 @@ public class BattleSystem : MonoBehaviour
                 yield break;
 
             yield return StartCoroutine(action.PerformAction());
+
+            if (playerUnit.currentHP <= 0)
+            {
+                state = BattleState.LOST;
+                EndBattle();
+                yield break;
+            }
+            else if (enemyUnit.currentHP <= 0)
+            {
+                state = BattleState.WON;
+                EndBattle();
+                yield break;
+            }
         }
 
-        if (playerUnit.currentHP <= 0)
-        {
-            state = BattleState.LOST;
-            EndBattle();
-        }
-        else if (enemyUnit.currentHP <= 0)
-        {
-            state = BattleState.WON;
-            EndBattle();
-        }
-        else
-        {
-            state = BattleState.PLAYERCHOOSE;
-            PlayerChoose();
-        }
+        state = BattleState.PLAYERCHOOSE;
+        PlayerChoose();
     }
 
     void EndBattle()
@@ -104,6 +104,12 @@ public class BattleSystem : MonoBehaviour
         dialogueText.text = "The attack is successful!";
 
         yield return new WaitForSeconds(2f);
+
+        if (isDead)
+        {
+            state = BattleState.WON;
+            EndBattle();
+        }
     }
 
     IEnumerator PlayerProtect()
@@ -209,3 +215,4 @@ public class BattleSystem : MonoBehaviour
         }
     }
 }
+
